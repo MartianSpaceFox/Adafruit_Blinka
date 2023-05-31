@@ -27,6 +27,7 @@ See `CircuitPython:board` in CircuitPython for more details.
 
 * Author(s): cefn
 """
+
 import sys
 
 import adafruit_platformdetect.constants.boards as ap_board
@@ -256,7 +257,7 @@ elif board_id is None:
     )
 
 else:
-    raise NotImplementedError("Board not supported {}".format(board_id))
+    raise NotImplementedError(f"Board not supported {board_id}")
 
 if "SCL" in locals() and "SDA" in locals():
 

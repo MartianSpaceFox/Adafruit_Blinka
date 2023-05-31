@@ -70,11 +70,11 @@ class SPI:
         """
         closest_preset = None
         for frequency in self._presets:
-            preset = self._presets[frequency]
             if self._frequency is None or abs(frequency - target_frequency) < abs(
                 self._frequency - target_frequency
             ):
                 self._frequency = frequency
+                preset = self._presets[frequency]
                 closest_preset = preset
 
         return closest_preset
@@ -130,8 +130,8 @@ class SPI:
         # Transmit our data in chunks of the buffer size.
         while data_to_transmit:
             # Extract a single data chunk from the transmit buffer.
-            chunk = data_to_transmit[0 : self.buffer_size]
-            del data_to_transmit[0 : self.buffer_size]
+            chunk = data_to_transmit[:self.buffer_size]
+            del data_to_transmit[:self.buffer_size]
 
             # Finally, exchange the data.
             response = self._spi.clock_data(len(chunk), bytes(chunk))

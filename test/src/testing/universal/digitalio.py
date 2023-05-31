@@ -34,15 +34,15 @@ class TestDigitalInOutInteractive(unittest.TestCase):
         print()
         from adafruit_blinka.agnostic import sleep
 
-        if not (led_hardwired) and not (yes_no("Is LED wired to {}".format(led_pin))):
+        if not (led_hardwired) and not yes_no(f"Is LED wired to {led_pin}"):
             return  # test trivially passed
         with DigitalInOut(led_pin) as led:
             led.direction = Direction.OUTPUT
             # should now be OUT, PUSH_PULL, value=0, and LED should light
-            led.value = False if led_inverted else True
+            led.value = not led_inverted
             self.assertTrue(yes_no("Is LED lit"))
             print("Winking LED...")
-            for count in range(2):
+            for _ in range(2):
                 led.value = not (led.value)
                 sleep(0.5)
                 led.value = not (led.value)
@@ -56,13 +56,10 @@ class TestDigitalInOutInteractive(unittest.TestCase):
             # button.direction = Direction.INPUT # implied
             try:
                 button.pull = Pull.UP
-            except NotImplementedError as e:
-                print(e)
-                return  # pull unsupported, test trivially passed
             except Exception as e:
                 print(e)
                 return  # pull unsupported, test trivially passed
-            if yes_no("Is Button wired from {} to GND".format(default_pin)):
+            if yes_no(f"Is Button wired from {default_pin} to GND"):
                 self.assertTrue(button.value == True)
                 self.assertTrue(
                     await_true("button pressed", lambda: button.value == False)
@@ -75,13 +72,10 @@ class TestDigitalInOutInteractive(unittest.TestCase):
             # button.direction = Direction.INPUT # implied
             try:
                 button.pull = Pull.DOWN
-            except NotImplementedError as e:
-                print(e)
-                return  # pull unsupported, test trivially passed
             except Exception as e:
                 print(e)
                 return  # pull unsupported, test trivially passed
-            if yes_no("Is Button wired from {} to VCC".format(default_pin)):
+            if yes_no(f"Is Button wired from {default_pin} to VCC"):
                 self.assertTrue(button.value == False)
                 self.assertTrue(
                     await_true("button pressed", lambda: button.value == True)

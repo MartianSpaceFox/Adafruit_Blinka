@@ -84,10 +84,7 @@ class RP2040_u2if:
         # remaing bytes = 64 byte report data
         # https://github.com/libusb/hidapi/blob/083223e77952e1ef57e6b77796536a3359c1b2a3/hidapi/hidapi.h#L185
         self._hid.write(b"\0" + report + b"\0" * (64 - len(report)))
-        if response:
-            # return is 64 byte response report
-            return self._hid.read(64)
-        return None
+        return self._hid.read(64) if response else None
 
     def _reset(self):
         self._hid_xfer(bytes([self.SYS_RESET]), False)

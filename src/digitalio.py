@@ -193,23 +193,20 @@ class DigitalInOut(ContextManaged):
 
     @pull.setter
     def pull(self, pul):
-        if self.direction is Direction.INPUT:
-            self.__pull = pul
-            if pul is Pull.UP:
-                self._pin.init(mode=Pin.IN, pull=Pin.PULL_UP)
-            elif pul is Pull.DOWN:
-                if hasattr(Pin, "PULL_DOWN"):
-                    self._pin.init(mode=Pin.IN, pull=Pin.PULL_DOWN)
-                else:
-                    raise NotImplementedError(
-                        "{} unsupported on {}".format(Pull.DOWN, board_id)
-                    )
-            elif pul is None:
-                self._pin.init(mode=Pin.IN, pull=None)
-            else:
-                raise AttributeError("Not a Pull")
-        else:
+        if self.direction is not Direction.INPUT:
             raise AttributeError("Not an input")
+        self.__pull = pul
+        if pul is Pull.UP:
+            self._pin.init(mode=Pin.IN, pull=Pin.PULL_UP)
+        elif pul is Pull.DOWN:
+            if hasattr(Pin, "PULL_DOWN"):
+                self._pin.init(mode=Pin.IN, pull=Pin.PULL_DOWN)
+            else:
+                raise NotImplementedError(f"{Pull.DOWN} unsupported on {board_id}")
+        elif pul is None:
+            self._pin.init(mode=Pin.IN, pull=None)
+        else:
+            raise AttributeError("Not a Pull")
 
     @property
     def drive_mode(self):

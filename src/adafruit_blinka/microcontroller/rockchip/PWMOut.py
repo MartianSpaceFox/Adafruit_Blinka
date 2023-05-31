@@ -86,7 +86,7 @@ class PWMOut:
             print("Variable Frequency is not supported, continuing without it...")
 
         if not os.path.isdir(self._chip_path):
-            raise LookupError("Opening PWM: PWM chip {} not found.".format(self._chip))
+            raise LookupError(f"Opening PWM: PWM chip {self._chip} not found.")
 
         if not os.path.isdir(self._channel_path):
             # Exporting the PWM.
@@ -94,13 +94,11 @@ class PWMOut:
                 with open(os.path.join(self._chip_path, "export"), "w") as f_export:
                     f_export.write("{:d}\n".format(self._channel))
             except IOError as e:
-                raise PWMError(
-                    e.errno, "Exporting PWM channel: " + e.strerror
-                ) from IOError
+                raise PWMError(e.errno, f"Exporting PWM channel: {e.strerror}") from IOError
 
             # Loop until PWM is exported
             exported = False
-            for i in range(PWMOut.PWM_STAT_RETRIES):
+            for _ in range(PWMOut.PWM_STAT_RETRIES):
                 if os.path.isdir(self._channel_path):
                     exported = True
                     break
@@ -125,12 +123,8 @@ class PWMOut:
                     ):
                         break
                 except IOError as e:
-                    if e.errno != EACCES or (
-                        e.errno == EACCES and i == PWMOut.PWM_STAT_RETRIES - 1
-                    ):
-                        raise PWMError(
-                            e.errno, "Opening PWM period: " + e.strerror
-                        ) from IOError
+                    if e.errno != EACCES or i == PWMOut.PWM_STAT_RETRIES - 1:
+                        raise PWMError(e.errno, f"Opening PWM period: {e.strerror}") from IOError
 
                 sleep(PWMOut.PWM_STAT_DELAY)
 
@@ -151,7 +145,7 @@ class PWMOut:
                 os.write(unexport_fd, "{:d}\n".format(self._channel).encode())
                 os.close(unexport_fd)
             except OSError as e:
-                raise PWMError(e.errno, "Unexporting PWM: " + e.strerror) from OSError
+                raise PWMError(e.errno, f"Unexporting PWM: {e.strerror}") from OSError
 
         self._chip = None
         self._channel = None
@@ -237,9 +231,7 @@ class PWMOut:
         try:
             period_ns = int(period_ns)
         except ValueError:
-            raise PWMError(
-                None, 'Unknown period value: "%s".' % period_ns
-            ) from ValueError
+            raise PWMError(None, f'Unknown period value: "{period_ns}".') from ValueError
 
         self._period_ns = period_ns
 

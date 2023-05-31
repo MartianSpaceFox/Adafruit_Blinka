@@ -8,7 +8,7 @@ gc.collect()
 
 
 def yes_no(q, default=True):
-    a = input(q + " (Y/n)?" if default else " (y/N)?")
+    a = input(f"{q} (Y/n)?" if default else " (y/N)?")
     a = a.lower()
     if a == "":
         return default
@@ -21,18 +21,15 @@ def yes_no(q, default=True):
 
 def multi_choice(q, choices, defaultPos=None):
     if defaultPos is not None:
-        print("{} [{}]?".format(q, defaultPos))
+        print(f"{q} [{defaultPos}]?")
     else:
-        print(q + "?")
+        print(f"{q}?")
     for pos, choice in enumerate(choices):
-        print("{}) {}".format(pos, choice))
+        print(f"{pos}) {choice}")
     a = input()
     a = a.lower()
     try:
-        if a == "":
-            a = defaultPos
-        else:
-            a = int(a)
+        a = defaultPos if a == "" else int(a)
         return choices[a]
     except Exception as e:
         print(e)
@@ -42,7 +39,7 @@ def multi_choice(q, choices, defaultPos=None):
 def await_true(name, fun, interval=0, patience=60):
     from adafruit_blinka.agnostic.time import sleep, monotonic
 
-    print("Waiting {} sec until {} (CTRL+C give up)".format(patience, name))
+    print(f"Waiting {patience} sec until {name} (CTRL+C give up)")
 
     deadline = monotonic() + patience
     try:
@@ -74,7 +71,7 @@ def test_module(module, runner=None):
 
 def test_module_name(absolute, runner=None):
     try:
-        print("Suite begin: {}".format(absolute))
+        print(f"Suite begin: {absolute}")
         module = __import__(absolute)
         relatives = absolute.split(".")
         if len(relatives) > 1:
@@ -82,12 +79,12 @@ def test_module_name(absolute, runner=None):
                 module = getattr(module, relative)
         return test_module(module, runner)
     finally:
-        print("Suite end: {}".format(absolute))
+        print(f"Suite end: {absolute}")
 
 
 def test_interactive(*module_names):
     for module_name in module_names:
-        if yes_no("Run suite {}".format(module_name)):
+        if yes_no(f"Run suite {module_name}"):
             gc.collect()
             test_module_name(module_name)
 

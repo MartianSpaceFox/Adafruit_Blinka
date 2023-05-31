@@ -27,9 +27,7 @@ class SPI:
                 break
         else:
             raise ValueError(
-                "No Hardware SPI on (SCLK, MOSI, MISO)={}\nValid SPI ports:{}".format(
-                    (clock, MOSI, MISO), spiPorts
-                )
+                f"No Hardware SPI on (SCLK, MOSI, MISO)={(clock, MOSI, MISO)}\nValid SPI ports:{spiPorts}"
             )
 
     # pylint: disable=too-many-arguments,unused-argument

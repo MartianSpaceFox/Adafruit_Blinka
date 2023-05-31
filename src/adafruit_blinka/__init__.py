@@ -19,10 +19,14 @@ class Enum:
         (assuming absolute import of containing package)
         """
         cls = type(self)
-        for key in dir(cls):
-            if getattr(cls, key) is self:
-                return "{}.{}.{}".format(cls.__module__, cls.__qualname__, key)
-        return repr(self)
+        return next(
+            (
+                f"{cls.__module__}.{cls.__qualname__}.{key}"
+                for key in dir(cls)
+                if getattr(cls, key) is self
+            ),
+            repr(self),
+        )
 
     @classmethod
     def iteritems(cls):

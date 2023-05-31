@@ -69,10 +69,10 @@ class SPI_Pico(SPI):
 
     def __init__(self, clock, *, baudrate=100000):
         index = None
-        if clock.id == 18:
-            index = 0
         if clock.id == 10:
             index = 1
+        elif clock.id == 18:
+            index = 0
         if index is None:
             raise ValueError("No SPI port on specified pin.")
         super().__init__(index, baudrate=baudrate)
@@ -82,9 +82,7 @@ class SPI_Feather(SPI):
     """SPI Class for Feather u2if"""
 
     def __init__(self, clock, *, baudrate=100000):
-        index = None
-        if clock.id == 18:
-            index = 0
+        index = 0 if clock.id == 18 else None
         if index is None:
             raise ValueError("No SPI port on specified pin.")
         super().__init__(index, baudrate=baudrate)
@@ -94,9 +92,7 @@ class SPI_QTPY(SPI):
     """SPI Class for QT Py u2if"""
 
     def __init__(self, clock, *, baudrate=100000):
-        index = None
-        if clock.id == 6:
-            index = 0
+        index = 0 if clock.id == 6 else None
         if index is None:
             raise ValueError("No SPI port on specified pin.")
         super().__init__(index, baudrate=baudrate)
@@ -106,9 +102,7 @@ class SPI_ItsyBitsy(SPI):
     """SPI Class for ItsyBitsy u2if"""
 
     def __init__(self, clock, *, baudrate=100000):
-        index = None
-        if clock.id == 18:
-            index = 0
+        index = 0 if clock.id == 18 else None
         if index is None:
             raise ValueError("No SPI port on specified pin.")
         super().__init__(index, baudrate=baudrate)

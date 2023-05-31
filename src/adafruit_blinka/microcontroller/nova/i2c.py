@@ -77,15 +77,14 @@ class I2C:
         end = end if end else len(buffer)
         result = self._nova.readBytesI2C(0, address << 1, len(buffer[start:end]))
 
-        if result != "-NG":
-            resp = result.split(" ")
-
-            for i in range(len(buffer[start:end])):
-                buffer[start + i] = int(resp[2 + i])
-        else:
+        if result == "-NG":
             raise RuntimeError(
-                "Received error response from Binho Nova, result = " + result
+                f"Received error response from Binho Nova, result = {result}"
             )
+        resp = result.split(" ")
+
+        for i in range(len(buffer[start:end])):
+            buffer[start + i] = int(resp[2 + i])
 
     # pylint: disable=too-many-locals,too-many-branches
     def writeto_then_readfrom(
@@ -137,19 +136,18 @@ class I2C:
                 totalIn -= numInBytes
                 totalOut -= numOutBytes
 
-                if result != "-NG":
-                    if numInBytes:
-                        resp = result.split(" ")
-                        resp = resp[2]
-
-                        for j in range(numInBytes):
-                            buffer_in[
-                                in_start + i * self.WHR_PAYLOAD_MAX_LENGTH + j
-                            ] = int(resp[j * 2] + resp[j * 2 + 1], 16)
-                else:
+                if result == "-NG":
                     raise RuntimeError(
-                        "Received error response from Binho Nova, result = " + result
+                        f"Received error response from Binho Nova, result = {result}"
                     )
+                if numInBytes:
+                    resp = result.split(" ")
+                    resp = resp[2]
+
+                    for j in range(numInBytes):
+                        buffer_in[
+                            in_start + i * self.WHR_PAYLOAD_MAX_LENGTH + j
+                        ] = int(resp[j * 2] + resp[j * 2 + 1], 16)
         else:
             self._nova.startI2C(0, address << 1)
 
@@ -165,15 +163,14 @@ class I2C:
                 0, address << 1, len(buffer_in[in_start:in_end])
             )
 
-            if result != "-NG":
-                resp = result.split(" ")
-
-                for i in range(len(buffer_in[in_start:in_end])):
-                    buffer_in[in_start + i] = int(resp[2 + i])
-            else:
+            if result == "-NG":
                 raise RuntimeError(
-                    "Received error response from Binho Nova, result = " + result
+                    f"Received error response from Binho Nova, result = {result}"
                 )
+            resp = result.split(" ")
+
+            for i in range(len(buffer_in[in_start:in_end])):
+                buffer_in[in_start + i] = int(resp[2 + i])
 
 
 # pylint: enable=unused-argument,too-many-locals,too-many-branches

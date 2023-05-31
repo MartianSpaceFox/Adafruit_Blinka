@@ -27,7 +27,7 @@ class Pin:
         self.id = pin_id
         if isinstance(pin_id, tuple):
             self._num = int(pin_id[1])
-            self._chippath = "/dev/gpiochip{}".format(pin_id[0])
+            self._chippath = f"/dev/gpiochip{pin_id[0]}"
         else:
             self._num = int(pin_id)
             self._chippath = "/dev/gpiochip0"
@@ -41,32 +41,33 @@ class Pin:
 
     def init(self, mode=IN, pull=None):
         """Initialize the Pin"""
-        if mode is not None:
-            if mode == self.IN:
-                self._mode = self.IN
-                if self._line is not None:
-                    self._line.close()
-                self._line = GPIO(self._chippath, int(self._num), self.IN)
-            elif mode == self.OUT:
-                self._mode = self.OUT
-                if self._line is not None:
-                    self._line.close()
-                self._line = GPIO(self._chippath, int(self._num), self.OUT)
-            else:
-                raise RuntimeError("Invalid mode for pin: %s" % self.id)
+        if mode is None:
+            return
+        if mode == self.IN:
+            self._mode = self.IN
+            if self._line is not None:
+                self._line.close()
+            self._line = GPIO(self._chippath, int(self._num), self.IN)
+        elif mode == self.OUT:
+            self._mode = self.OUT
+            if self._line is not None:
+                self._line.close()
+            self._line = GPIO(self._chippath, int(self._num), self.OUT)
+        else:
+            raise RuntimeError(f"Invalid mode for pin: {self.id}")
 
-            if pull is not None:
-                if pull == self.PULL_UP:
-                    raise NotImplementedError(
-                        "Internal pullups not supported in periphery, "
-                        "use physical resistor instead!"
-                    )
-                if pull == self.PULL_DOWN:
-                    raise NotImplementedError(
-                        "Internal pulldowns not supported in periphery, "
-                        "use physical resistor instead!"
-                    )
-                raise RuntimeError("Invalid pull for pin: %s" % self.id)
+        if pull is not None:
+            if pull == self.PULL_UP:
+                raise NotImplementedError(
+                    "Internal pullups not supported in periphery, "
+                    "use physical resistor instead!"
+                )
+            if pull == self.PULL_DOWN:
+                raise NotImplementedError(
+                    "Internal pulldowns not supported in periphery, "
+                    "use physical resistor instead!"
+                )
+            raise RuntimeError(f"Invalid pull for pin: {self.id}")
 
     def value(self, val=None):
         """Set or return the Pin Value"""

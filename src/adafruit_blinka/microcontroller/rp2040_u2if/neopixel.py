@@ -9,9 +9,5 @@ def neopixel_write(gpio, buf):
     # pad output buffer from 3 bpp to 4 bpp
     buffer = []
     for i in range(0, len(buf), 3):
-        buffer.append(0)
-        buffer.append(buf[i + 2])
-        buffer.append(buf[i + 1])
-        buffer.append(buf[i])
-
+        buffer.extend((0, buf[i + 2], buf[i + 1], buf[i]))
     rp2040_u2if.neopixel_write(gpio, buffer)

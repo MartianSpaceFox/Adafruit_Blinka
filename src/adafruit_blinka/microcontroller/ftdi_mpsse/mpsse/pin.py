@@ -37,7 +37,7 @@ class Pin:
         # check if pin is valid
         if pin_id:
             if Pin.mpsse_gpio.all_pins & 1 << pin_id == 0:
-                raise ValueError("Can not use pin {} as GPIO.".format(pin_id))
+                raise ValueError(f"Can not use pin {pin_id} as GPIO.")
         # ID is just bit position
         self.id = pin_id
 

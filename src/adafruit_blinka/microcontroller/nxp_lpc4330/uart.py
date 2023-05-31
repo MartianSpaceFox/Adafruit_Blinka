@@ -35,9 +35,7 @@ class UART:
         )
 
         if flow is not None:  # default None
-            raise NotImplementedError(
-                "Parameter '{}' unsupported on GreatFET One".format("flow")
-            )
+            raise NotImplementedError("Parameter 'flow' unsupported on GreatFET One")
 
     # pylint: enable=too-many-arguments,unused-argument
 
@@ -47,9 +45,7 @@ class UART:
 
     def read(self, nbytes=None):
         """Read data from UART and return it"""
-        if nbytes is None:
-            return None
-        return self._uart.read(nbytes)
+        return None if nbytes is None else self._uart.read(nbytes)
 
     def readinto(self, buf, nbytes=None):
         """Read data from UART and into the buffer"""

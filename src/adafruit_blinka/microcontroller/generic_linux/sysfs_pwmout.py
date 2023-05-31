@@ -114,7 +114,7 @@ class PWMOut:
             with open(os.path.join(channel_path, self._export_path), "w") as f_export:
                 f_export.write("%d\n" % self._pwmpin)
         except IOError as e:
-            raise PWMError(e.errno, "Exporting PWM pin: " + e.strerror) from IOError
+            raise PWMError(e.errno, f"Exporting PWM pin: {e.strerror}") from IOError
 
         # Loop until 'period' is writable, because application of udev rules
         # after the above pin export is asynchronous.
@@ -129,10 +129,8 @@ class PWMOut:
                 ):
                     break
             except IOError as e:
-                if e.errno != EACCES or (
-                    e.errno == EACCES and i == PWMOut.PWM_STAT_RETRIES - 1
-                ):
-                    raise PWMError(e.errno, "Opening PWM period: " + e.strerror) from e
+                if e.errno != EACCES or i == PWMOut.PWM_STAT_RETRIES - 1:
+                    raise PWMError(e.errno, f"Opening PWM period: {e.strerror}") from e
             sleep(PWMOut.PWM_STAT_DELAY)
 
         # self._set_enabled(False) # This line causes a write error when trying to enable
@@ -162,9 +160,7 @@ class PWMOut:
                 ) as f_unexport:
                     f_unexport.write("%d\n" % self._pwmpin)
             except IOError as e:
-                raise PWMError(
-                    e.errno, "Unexporting PWM pin: " + e.strerror
-                ) from IOError
+                raise PWMError(e.errno, f"Unexporting PWM pin: {e.strerror}") from IOError
 
         self._channel = None
         self._pwmpin = None
@@ -212,9 +208,7 @@ class PWMOut:
         try:
             period_ns = int(period_ns)
         except ValueError:
-            raise PWMError(
-                None, 'Unknown period value: "%s"' % period_ns
-            ) from ValueError
+            raise PWMError(None, f'Unknown period value: "{period_ns}"') from ValueError
 
         # Convert period from nanoseconds to seconds
         period = period_ns / 1e9
@@ -231,7 +225,7 @@ class PWMOut:
         # Convert period from seconds to integer nanoseconds
         period_ns = int(period * 1e9)
 
-        self._write_pin_attr(self._pin_period_path, "{}".format(period_ns))
+        self._write_pin_attr(self._pin_period_path, f"{period_ns}")
 
         # Update our cached period
         self._period = float(period)
@@ -253,7 +247,7 @@ class PWMOut:
             duty_cycle_ns = int(duty_cycle_ns)
         except ValueError:
             raise PWMError(
-                None, 'Unknown duty cycle value: "%s"' % duty_cycle_ns
+                None, f'Unknown duty cycle value: "{duty_cycle_ns}"'
             ) from ValueError
 
         # Convert duty cycle from nanoseconds to seconds
@@ -262,9 +256,7 @@ class PWMOut:
         # Convert duty cycle to ratio from 0.0 to 1.0
         duty_cycle = duty_cycle / self._period
 
-        # convert to 16-bit
-        duty_cycle = int(duty_cycle * 65535)
-        return duty_cycle
+        return int(duty_cycle * 65535)
 
     def _set_duty_cycle(self, duty_cycle):
         if not isinstance(duty_cycle, (int, float)):
@@ -276,12 +268,12 @@ class PWMOut:
             raise ValueError("Invalid duty cycle value, should be between 0.0 and 1.0.")
 
         # Convert duty cycle from ratio to seconds
-        duty_cycle = duty_cycle * self._period
+        duty_cycle *= self._period
 
         # Convert duty cycle from seconds to integer nanoseconds
         duty_cycle_ns = int(duty_cycle * 1e9)
 
-        self._write_pin_attr(self._pin_duty_cycle_path, "{}".format(duty_cycle_ns))
+        self._write_pin_attr(self._pin_duty_cycle_path, f"{duty_cycle_ns}")
 
     duty_cycle = property(_get_duty_cycle, _set_duty_cycle)
     """Get or set the PWM's output duty cycle as a ratio from 0.0 to 1.0.
@@ -321,7 +313,7 @@ class PWMOut:
         if enabled == "0":
             return False
 
-        raise PWMError(None, 'Unknown enabled value: "%s"' % enabled)
+        raise PWMError(None, f'Unknown enabled value: "{enabled}"')
 
     def _set_enabled(self, value):
         """Get or set the PWM's output enabled state.

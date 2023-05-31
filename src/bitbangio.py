@@ -19,7 +19,7 @@ class I2C(Lockable):
     def __init__(self, scl, sda, frequency=400000):
         # TODO: This one is a bit questionable:
         if agnostic.board_id == ap_board.PYBOARD:
-            raise NotImplementedError("No software I2C on {}".format(agnostic.board_id))
+            raise NotImplementedError(f"No software I2C on {agnostic.board_id}")
         if agnostic.detector.board.any_embedded_linux:
             # TODO: Attempt to load this library automatically
             raise NotImplementedError(

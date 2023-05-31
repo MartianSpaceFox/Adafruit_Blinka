@@ -84,28 +84,29 @@ class Pin:
 
     def init(self, mode=IN, pull=None):
         """Initialize the Pin"""
-        if mode is not None:
-            if mode == self.IN:
-                self._mode = self.IN
-                self._open(self.IN)
-            elif mode == self.OUT:
-                self._mode = self.OUT
-                self._open(self.OUT)
-            else:
-                raise RuntimeError("Invalid mode for pin: %s" % self.id)
+        if mode is None:
+            return
+        if mode == self.IN:
+            self._mode = self.IN
+            self._open(self.IN)
+        elif mode == self.OUT:
+            self._mode = self.OUT
+            self._open(self.OUT)
+        else:
+            raise RuntimeError(f"Invalid mode for pin: {self.id}")
 
-            if pull is not None:
-                if pull == self.PULL_UP:
-                    raise NotImplementedError(
-                        "Internal pullups not supported in periphery, "
-                        "use physical resistor instead!"
-                    )
-                if pull == self.PULL_DOWN:
-                    raise NotImplementedError(
-                        "Internal pulldowns not supported in periphery, "
-                        "use physical resistor instead!"
-                    )
-                raise RuntimeError("Invalid pull for pin: %s" % self.id)
+        if pull is not None:
+            if pull == self.PULL_UP:
+                raise NotImplementedError(
+                    "Internal pullups not supported in periphery, "
+                    "use physical resistor instead!"
+                )
+            if pull == self.PULL_DOWN:
+                raise NotImplementedError(
+                    "Internal pulldowns not supported in periphery, "
+                    "use physical resistor instead!"
+                )
+            raise RuntimeError(f"Invalid pull for pin: {self.id}")
 
     def value(self, val=None):
         """Set or return the Pin Value"""
@@ -135,11 +136,11 @@ class Pin:
                 with open("/sys/class/gpio/export", "w") as f_export:
                     f_export.write("{:d}\n".format(self.id))
             except IOError as e:
-                raise GPIOError(e.errno, "Exporting GPIO: " + e.strerror) from IOError
+                raise GPIOError(e.errno, f"Exporting GPIO: {e.strerror}") from IOError
 
             # Loop until GPIO is exported
             exported = False
-            for i in range(self.GPIO_OPEN_RETRIES):
+            for _ in range(self.GPIO_OPEN_RETRIES):
                 if os.path.isdir(gpio_path):
                     exported = True
                     break
@@ -159,12 +160,8 @@ class Pin:
                         f_direction.write(direction.lower() + "\n")
                     break
                 except IOError as e:
-                    if e.errno != errno.EACCES or (
-                        e.errno == errno.EACCES and i == self.GPIO_OPEN_RETRIES - 1
-                    ):
-                        raise GPIOError(
-                            e.errno, "Setting GPIO direction: " + e.strerror
-                        ) from IOError
+                    if e.errno != errno.EACCES or i == self.GPIO_OPEN_RETRIES - 1:
+                        raise GPIOError(e.errno, f"Setting GPIO direction: {e.strerror}") from IOError
 
                 time.sleep(self.GPIO_OPEN_DELAY)
         else:
@@ -173,15 +170,13 @@ class Pin:
                 with open(os.path.join(gpio_path, "direction"), "w") as f_direction:
                     f_direction.write(direction.lower() + "\n")
             except IOError as e:
-                raise GPIOError(
-                    e.errno, "Setting GPIO direction: " + e.strerror
-                ) from IOError
+                raise GPIOError(e.errno, f"Setting GPIO direction: {e.strerror}") from IOError
 
         # Open value
         try:
             self._fd = os.open(os.path.join(gpio_path, "value"), os.O_RDWR)
         except OSError as e:
-            raise GPIOError(e.errno, "Opening GPIO: " + e.strerror) from OSError
+            raise GPIOError(e.errno, f"Opening GPIO: {e.strerror}") from OSError
 
         self._path = gpio_path
 
@@ -194,7 +189,7 @@ class Pin:
         try:
             os.close(self._fd)
         except OSError as e:
-            raise GPIOError(e.errno, "Closing GPIO: " + e.strerror) from OSError
+            raise GPIOError(e.errno, f"Closing GPIO: {e.strerror}") from OSError
 
         self._fd = None
 
@@ -204,27 +199,27 @@ class Pin:
             os.write(unexport_fd, "{:d}\n".format(self.id).encode())
             os.close(unexport_fd)
         except OSError as e:
-            raise GPIOError(e.errno, "Unexporting GPIO: " + e.strerror) from OSError
+            raise GPIOError(e.errno, f"Unexporting GPIO: {e.strerror}") from OSError
 
     def _read(self):
         # Read value
         try:
             buf = os.read(self._fd, 2)
         except OSError as e:
-            raise GPIOError(e.errno, "Reading GPIO: " + e.strerror) from OSError
+            raise GPIOError(e.errno, f"Reading GPIO: {e.strerror}") from OSError
 
         # Rewind
         try:
             os.lseek(self._fd, 0, os.SEEK_SET)
         except OSError as e:
-            raise GPIOError(e.errno, "Rewinding GPIO: " + e.strerror) from OSError
+            raise GPIOError(e.errno, f"Rewinding GPIO: {e.strerror}") from OSError
 
         if buf[0] == b"0"[0]:
             return False
         if buf[0] == b"1"[0]:
             return True
 
-        raise GPIOError(None, "Unknown GPIO value: {}".format(buf))
+        raise GPIOError(None, f"Unknown GPIO value: {buf}")
 
     def _write(self, value):
         if not isinstance(value, bool):
@@ -237,13 +232,13 @@ class Pin:
             else:
                 os.write(self._fd, b"0\n")
         except OSError as e:
-            raise GPIOError(e.errno, "Writing GPIO: " + e.strerror) from OSError
+            raise GPIOError(e.errno, f"Writing GPIO: {e.strerror}") from OSError
 
         # Rewind
         try:
             os.lseek(self._fd, 0, os.SEEK_SET)
         except OSError as e:
-            raise GPIOError(e.errno, "Rewinding GPIO: " + e.strerror) from OSError
+            raise GPIOError(e.errno, f"Rewinding GPIO: {e.strerror}") from OSError
 
     @property
     def chip_name(self):
@@ -272,13 +267,9 @@ class Pin:
                 label = f_label.read()
         except (GPIOError, IOError) as e:
             if isinstance(e, IOError):
-                raise GPIOError(
-                    e.errno, "Reading gpiochip label: " + e.strerror
-                ) from IOError
+                raise GPIOError(e.errno, f"Reading gpiochip label: {e.strerror}") from IOError
 
-            raise GPIOError(
-                None, "Reading gpiochip label: " + e.strerror
-            ) from GPIOError
+            raise GPIOError(None, f"Reading gpiochip label: {e.strerror}") from GPIOError
 
         return label.strip()
 
@@ -290,9 +281,7 @@ class Pin:
             with open(os.path.join(self._path, "direction"), "r") as f_direction:
                 direction = f_direction.read()
         except IOError as e:
-            raise GPIOError(
-                e.errno, "Getting GPIO direction: " + e.strerror
-            ) from IOError
+            raise GPIOError(e.errno, f"Getting GPIO direction: {e.strerror}") from IOError
 
         return direction.strip()
 
@@ -307,9 +296,7 @@ class Pin:
             with open(os.path.join(self._path, "direction"), "w") as f_direction:
                 f_direction.write(direction.lower() + "\n")
         except IOError as e:
-            raise GPIOError(
-                e.errno, "Setting GPIO direction: " + e.strerror
-            ) from IOError
+            raise GPIOError(e.errno, f"Setting GPIO direction: {e.strerror}") from IOError
 
     direction = property(_get_direction, _set_direction)
 

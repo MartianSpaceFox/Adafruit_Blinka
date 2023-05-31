@@ -51,7 +51,7 @@ class PulseIn:
 
         dir_path = os.path.dirname(os.path.realpath(__file__))
         cmd = [
-            dir_path + "/libgpiod_pulsein",
+            f"{dir_path}/libgpiod_pulsein",
             "--pulses",
             str(maxlen),
             "--queue",
@@ -83,16 +83,14 @@ class PulseIn:
             stamp = time.monotonic()
             while (time.monotonic() - stamp) < timeout:
                 try:
-                    message = self._mq.receive(block=False, type=type)
-                    return message
+                    return self._mq.receive(block=False, type=type)
                 except sysv_ipc.BusyError:
                     time.sleep(0.001)  # wait a bit then retry!
             # uh-oh timed out
             raise RuntimeError(
                 "Timed out waiting for PulseIn message. Make sure libgpiod is installed."
             )
-        message = self._mq.receive(block=True, type=type)
-        return message
+        return self._mq.receive(block=True, type=type)
 
     # pylint: enable=redefined-builtin
 

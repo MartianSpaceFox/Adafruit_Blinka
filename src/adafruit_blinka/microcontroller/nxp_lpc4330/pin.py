@@ -54,7 +54,7 @@ class Pin:
             self._pin = gf.apis.dac
             self._pin.initialize()
         else:
-            raise ValueError("Incorrect pin mode: {}".format(mode))
+            raise ValueError(f"Incorrect pin mode: {mode}")
         self._mode = mode
 
     def value(self, val=None):
@@ -85,9 +85,7 @@ class Pin:
             # Set DAC Here
             self._pin.set_value(int(val))
             return None
-        raise RuntimeError(
-            "No action for mode {} with value {}".format(self._mode, val)
-        )
+        raise RuntimeError(f"No action for mode {self._mode} with value {val}")
 
 
 # create pin instances for each pin

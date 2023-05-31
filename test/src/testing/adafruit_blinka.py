@@ -36,7 +36,7 @@ class TestEnum(unittest.TestCase):
         """A repr() call on an Enum gives its fully-qualified name"""
         name = "one"
         actual = repr(getattr(self.Cls, name))
-        expected = "{}.{}.{}".format(self.Cls.__module__, self.Cls.__qualname__, name)
+        expected = f"{self.Cls.__module__}.{self.Cls.__qualname__}.{name}"
         self.assertEqual(actual, expected)
 
     def test_str(self):

@@ -188,7 +188,7 @@ class PWMOut:
         if enabled == "0":
             return False
 
-        raise PWMError(None, 'Unknown enabled value: "%s"' % enabled)
+        raise PWMError(None, f'Unknown enabled value: "{enabled}"')
 
     def _set_enabled(self, value):
         """Get or set the PWM's output enabled state.

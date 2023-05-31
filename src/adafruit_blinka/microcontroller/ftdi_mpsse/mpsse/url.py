@@ -14,10 +14,7 @@ def get_ft232h_url():
 
     url = os.environ.get("BLINKA_FT232H", "1")
 
-    if url.startswith("ftdi:"):
-        return url
-
-    return "ftdi://ftdi:ft232h/1"
+    return url if url.startswith("ftdi:") else "ftdi://ftdi:ft232h/1"
 
 
 def get_ft2232h_url(interface_id):
@@ -26,9 +23,9 @@ def get_ft2232h_url(interface_id):
     that. Otherwise, returns a default value.
     """
 
-    url = os.environ.get("BLINKA_FT2232H_{}".format(interface_id), "1")
+    url = os.environ.get(f"BLINKA_FT2232H_{interface_id}", "1")
 
     if url.startswith("ftdi:"):
         return url
 
-    return "ftdi://ftdi:ft2232h/{}".format(interface_id + 1)
+    return f"ftdi://ftdi:ft2232h/{interface_id + 1}"

@@ -1,5 +1,6 @@
 """Pin definitions for the Odroid N2."""
 
+
 from adafruit_blinka.microcontroller.amlogic.s922x import pin
 
 GPIOX_0 = pin.GPIO476
@@ -52,8 +53,8 @@ GPIOA0_14 = pin.GPIO510
 GPIOA0_15 = pin.GPIO511
 
 for it in pin.i2cPorts:
-    globals()["SCL" + str(it[0])] = it[1]
-    globals()["SDA" + str(it[0])] = it[2]
+    globals()[f"SCL{str(it[0])}"] = it[1]
+    globals()[f"SDA{str(it[0])}"] = it[2]
 
 # Set second i2c bus as default for backward compatibility.
 SCL = pin.i2cPorts[1][1]

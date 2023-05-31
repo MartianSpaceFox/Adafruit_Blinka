@@ -36,7 +36,7 @@ class Pin:
                 self._mode = self.OUT
                 GPIO.setup(self.id, GPIO.OUT)
             else:
-                raise RuntimeError("Invalid mode for pin: %s" % self.id)
+                raise RuntimeError(f"Invalid mode for pin: {self.id}")
         if pull is not None:
             if self._mode != self.IN:
                 raise RuntimeError("Cannot set pull resistor on output")
@@ -45,19 +45,15 @@ class Pin:
             elif pull == self.PULL_DOWN:
                 GPIO.setup(self.id, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
             else:
-                raise RuntimeError("Invalid pull for pin: %s" % self.id)
+                raise RuntimeError(f"Invalid pull for pin: {self.id}")
 
     def value(self, val=None):
         """Set or return the Pin Value"""
         if val is not None:
-            if val == self.LOW:
-                self._value = val
-                GPIO.output(self.id, val)
-            elif val == self.HIGH:
-                self._value = val
-                GPIO.output(self.id, val)
-            else:
+            if val not in [self.LOW, self.HIGH]:
                 raise RuntimeError("Invalid value for pin")
+            self._value = val
+            GPIO.output(self.id, val)
             return None
         return GPIO.input(self.id)
 

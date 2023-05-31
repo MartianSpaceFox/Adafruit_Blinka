@@ -8,6 +8,7 @@ Currently supported on Raspberry Pi only.
 * Author(s): ladyada
 """
 
+
 import sys
 
 from adafruit_blinka.agnostic import detector
@@ -23,9 +24,7 @@ elif (
     or detector.board.qt2040_trinkey_u2if
 ):
     from adafruit_blinka.microcontroller.rp2040_u2if import neopixel as _neopixel
-elif "sphinx" in sys.modules:
-    pass
-else:
+elif "sphinx" not in sys.modules:
     raise NotImplementedError("Board not supported")
 
 

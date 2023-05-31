@@ -151,9 +151,7 @@ class PWMOut:
         # Convert duty cycle to ratio from 0.0 to 1.0
         duty_cycle = duty_cycle / PWMOut.MAX_CYCLE_LEVEL
 
-        # convert to 16-bit
-        duty_cycle = int(duty_cycle * 65535)
-        return duty_cycle
+        return int(duty_cycle * 65535)
 
     def _set_duty_cycle(self, duty_cycle):
         if not isinstance(duty_cycle, (int, float)):
@@ -165,7 +163,7 @@ class PWMOut:
             raise ValueError("Invalid duty cycle value, should be between 0.0 and 1.0.")
 
         # Convert duty cycle from ratio to 1024 levels
-        duty_cycle = duty_cycle * PWMOut.MAX_CYCLE_LEVEL
+        duty_cycle *= PWMOut.MAX_CYCLE_LEVEL
 
         # Set duty cycle
         # pylint: disable=protected-access
@@ -210,7 +208,7 @@ class PWMOut:
         if enabled == "0":
             return False
 
-        raise PWMError(None, 'Unknown enabled value: "%s"' % enabled)
+        raise PWMError(None, f'Unknown enabled value: "{enabled}"')
 
     def _set_enabled(self, value):
         """Get or set the PWM's output enabled state.

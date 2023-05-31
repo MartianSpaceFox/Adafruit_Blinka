@@ -65,10 +65,7 @@ class MCP2221:
         # https://github.com/libusb/hidapi/blob/083223e77952e1ef57e6b77796536a3359c1b2a3/hidapi/hidapi.h#L185
         self._hid.write(b"\0" + report + b"\0" * (64 - len(report)))
         time.sleep(MCP2221_HID_DELAY)
-        if response:
-            # return is 64 byte response report
-            return self._hid.read(64)
-        return None
+        return self._hid.read(64) if response else None
 
     # ----------------------------------------------------------------
     # MISC
@@ -102,7 +99,7 @@ class MCP2221:
         print("     0  1  2  3  4  5  6  7  8  9")
         index = 0
         for row in range(7):
-            print("{} : ".format(row), end="")
+            print(f"{row} : ", end="")
             for _ in range(10):
                 print("{:02x} ".format(report[index]), end="")
                 index += 1

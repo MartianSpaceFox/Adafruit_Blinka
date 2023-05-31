@@ -110,9 +110,7 @@ class I2C(Lockable):
                 pass
         else:
             raise ValueError(
-                "No Hardware I2C on (scl,sda)={}\nValid I2C ports: {}".format(
-                    (scl, sda), i2cPorts
-                )
+                f"No Hardware I2C on (scl,sda)={(scl, sda)}\nValid I2C ports: {i2cPorts}"
             )
         if threading is not None:
             self._lock = threading.RLock()
@@ -150,7 +148,7 @@ class I2C(Lockable):
     def writeto(self, address, buffer, *, start=0, end=None, stop=True):
         """Write to a device at specified address from a buffer"""
         if isinstance(buffer, str):
-            buffer = bytes([ord(x) for x in buffer])
+            buffer = bytes(ord(x) for x in buffer)
         if start != 0 or end is not None:
             if end is None:
                 return self._i2c.writeto(address, memoryview(buffer)[start:], stop=stop)
@@ -272,9 +270,7 @@ class SPI(Lockable):
                 break
         else:
             raise ValueError(
-                "No Hardware SPI on (SCLK, MOSI, MISO)={}\nValid SPI ports:{}".format(
-                    (clock, MOSI, MISO), spiPorts
-                )
+                f"No Hardware SPI on (SCLK, MOSI, MISO)={(clock, MOSI, MISO)}\nValid SPI ports:{spiPorts}"
             )
 
     def configure(self, baudrate=100000, polarity=0, phase=0, bits=8):
@@ -456,7 +452,7 @@ class UART(Lockable):
 
         if flow is not None:  # default 0
             raise NotImplementedError(
-                "Parameter '{}' unsupported on {}".format("flow", agnostic.board_id)
+                f"Parameter 'flow' unsupported on {agnostic.board_id}"
             )
 
         # translate parity flag for Micropython
@@ -464,9 +460,7 @@ class UART(Lockable):
             parity = 1
         elif parity is UART.Parity.EVEN:
             parity = 0
-        elif parity is None:
-            pass
-        else:
+        elif parity is not None:
             raise ValueError("Invalid parity")
 
         if detector.chip.id == ap_chip.RP2040:
@@ -494,9 +488,7 @@ class UART(Lockable):
                     break
             else:
                 raise ValueError(
-                    "No Hardware UART on (tx,rx)={}\nValid UART ports: {}".format(
-                        (tx, rx), uartPorts
-                    )
+                    f"No Hardware UART on (tx,rx)={(tx, rx)}\nValid UART ports: {uartPorts}"
                 )
 
     def deinit(self):

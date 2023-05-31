@@ -25,15 +25,17 @@ class Pin(Enum):
 
         for key in dir(board):
             if getattr(board, key) is self:
-                return "board.{}".format(key)
+                return f"board.{key}"
         import microcontroller.pin as pin
 
-        # pylint: enable=import-outside-toplevel, cyclic-import
-
-        for key in dir(pin):
-            if getattr(pin, key) is self:
-                return "microcontroller.pin.{}".format(key)
-        return repr(self)
+        return next(
+            (
+                f"microcontroller.pin.{key}"
+                for key in dir(pin)
+                if getattr(pin, key) is self
+            ),
+            repr(self),
+        )
 
 
 # We intentionally are patching into this namespace so skip the wildcard check.
@@ -87,8 +89,6 @@ elif chip_id == ap_chip.RK3399:
     from adafruit_blinka.microcontroller.rockchip.rk3399.pin import *
 elif chip_id == ap_chip.RK3328:
     from adafruit_blinka.microcontroller.rockchip.rk3328.pin import *
-elif chip_id == ap_chip.H5:
-    from adafruit_blinka.microcontroller.allwinner.h5.pin import *
 elif chip_id == ap_chip.IMX8MX:
     from adafruit_blinka.microcontroller.nxp_imx8m import *
 elif chip_id == ap_chip.IMX6ULL:

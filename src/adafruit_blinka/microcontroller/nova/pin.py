@@ -24,7 +24,7 @@ class Pin:
             Pin._nova = Connection.getInstance()
         # check if pin is valid
         if pin_id > 4:
-            raise ValueError("Invalid pin {}.".format(pin_id))
+            raise ValueError(f"Invalid pin {pin_id}.")
 
         self.id = pin_id
 

@@ -1,10 +1,11 @@
 """Pin definitions for the Odroid C4."""
 
+
 from adafruit_blinka.microcontroller.amlogic.s905x3 import pin
 
 for it in pin.i2cPorts:
-    globals()["SCL" + str(it[0])] = it[1]
-    globals()["SDA" + str(it[0])] = it[2]
+    globals()[f"SCL{str(it[0])}"] = it[1]
+    globals()[f"SDA{str(it[0])}"] = it[2]
 
 SCL = pin.i2cPorts[0][1]
 SDA = pin.i2cPorts[0][2]

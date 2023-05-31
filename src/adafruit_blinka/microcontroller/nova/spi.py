@@ -102,36 +102,34 @@ class SPI:
                 result = self._nova.writeToReadFromSPI(
                     0, False, True, chunk_end - chunk_start, write_value
                 )
-                if result != "-NG":
-                    resp = result.split(" ")
-                    resp = resp[2]
-                    # loop over half of resp len as we're reading 2 chars at a time to form a byte
-                    loops = int(len(resp) / 2)
-                    for j in range(loops):
-                        buf[(i * self.WHR_PAYLOAD_MAX_LENGTH) + start + j] = int(
-                            resp[j * 2] + resp[j * 2 + 1], 16
-                        )
-                else:
+                if result == "-NG":
                     raise RuntimeError(
-                        "Received error response from Binho Nova, result = " + result
+                        f"Received error response from Binho Nova, result = {result}"
+                    )
+                resp = result.split(" ")
+                resp = resp[2]
+                    # loop over half of resp len as we're reading 2 chars at a time to form a byte
+                loops = len(resp) // 2
+                for j in range(loops):
+                    buf[(i * self.WHR_PAYLOAD_MAX_LENGTH) + start + j] = int(
+                        resp[j * 2] + resp[j * 2 + 1], 16
                     )
             if rest:
                 result = self._nova.writeToReadFromSPI(
                     0, False, True, rest, write_value
                 )
-                if result != "-NG":
-                    resp = result.split(" ")
-                    resp = resp[2]
+                if result == "-NG":
+                    raise RuntimeError(
+                        f"Received error response from Binho Nova, result = {result}"
+                    )
+                resp = result.split(" ")
+                resp = resp[2]
 
                     # loop over half of resp len as we're reading 2 chars at a time to form a byte
-                    loops = int(len(resp) / 2)
-                    for j in range(loops):
-                        buf[(i * self.WHR_PAYLOAD_MAX_LENGTH) + start + j] = int(
-                            resp[j * 2] + resp[j * 2 + 1], 16
-                        )
-                else:
-                    raise RuntimeError(
-                        "Received error response from Binho Nova, result = " + result
+                loops = len(resp) // 2
+                for j in range(loops):
+                    buf[(i * self.WHR_PAYLOAD_MAX_LENGTH) + start + j] = int(
+                        resp[j * 2] + resp[j * 2 + 1], 16
                     )
         else:
             for i in range(start, end):
@@ -170,38 +168,36 @@ class SPI:
                     buffer_out[chunk_start:chunk_end],
                 )
 
-                if result != "-NG":
-                    resp = result.split(" ")
-                    resp = resp[2]
+                if result == "-NG":
+                    raise RuntimeError(
+                        f"Received error response from Binho Nova, result = {result}"
+                    )
+                resp = result.split(" ")
+                resp = resp[2]
 
                     # loop over half of resp len as we're reading 2 chars at a time to form a byte
-                    loops = int(len(resp) / 2)
-                    for j in range(loops):
-                        buffer_in[
-                            (i * self.WHR_PAYLOAD_MAX_LENGTH) + in_start + j
-                        ] = int(resp[j * 2] + resp[j * 2 + 1], 16)
-                else:
-                    raise RuntimeError(
-                        "Received error response from Binho Nova, result = " + result
-                    )
+                loops = len(resp) // 2
+                for j in range(loops):
+                    buffer_in[
+                        (i * self.WHR_PAYLOAD_MAX_LENGTH) + in_start + j
+                    ] = int(resp[j * 2] + resp[j * 2 + 1], 16)
             if rest:
                 result = self._nova.writeToReadFromSPI(
                     0, True, True, rest, buffer_out[-1 * rest :]
                 )
-                if result != "-NG":
-                    resp = result.split(" ")
-                    resp = resp[2]
+                if result == "-NG":
+                    raise RuntimeError(
+                        f"Received error response from Binho Nova, result = {result}"
+                    )
+                resp = result.split(" ")
+                resp = resp[2]
 
                     # loop over half of resp len as we're reading 2 chars at a time to form a byte
-                    loops = int(len(resp) / 2)
-                    for j in range(loops):
-                        buffer_in[
-                            (i * self.WHR_PAYLOAD_MAX_LENGTH) + in_start + j
-                        ] = int(resp[j * 2] + resp[j * 2 + 1], 16)
-                else:
-                    raise RuntimeError(
-                        "Received error response from Binho Nova, result = " + result
-                    )
+                loops = len(resp) // 2
+                for j in range(loops):
+                    buffer_in[
+                        (i * self.WHR_PAYLOAD_MAX_LENGTH) + in_start + j
+                    ] = int(resp[j * 2] + resp[j * 2 + 1], 16)
             print(buffer_in)
         else:
             for data_out in buffer_out:

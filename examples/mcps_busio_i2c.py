@@ -14,7 +14,7 @@ class MCP2221(_MCP2221):  # pylint: disable=too-few-public-methods
     def __init__(self, address):
         self._hid = hid.device()
         self._hid.open_path(address)
-        print("Connected to " + str(address))
+        print(f"Connected to {str(address)}")
         self._gp_config = [0x07] * 4  # "don't care" initial value
         for pin in range(4):
             self.gp_set_mode(pin, self.GP_GPIO)  # set to GPIO mode
@@ -34,15 +34,13 @@ class I2C(busio.I2C):  # pylint: disable=too-few-public-methods
 
 addresses = [mcp["path"] for mcp in hid.enumerate(0x04D8, 0x00DD)]
 
-i2c_devices = []
-i2c_devices.append(I2C(MCP2221I2C(_mcp2221)))
-
+i2c_devices = [I2C(MCP2221I2C(_mcp2221))]
 for addr in addresses:
     try:
         i2c_device = I2C(MCP2221I2C(MCP2221(addr)))
         i2c_devices.append(i2c_device)
     except OSError:
-        print("Device path: " + str(addr) + " is used")
+        print(f"Device path: {str(addr)} is used")
 
 
 while True:
@@ -52,6 +50,6 @@ while True:
         addrbuf[1] = ADDRID1 & 0xFF
         inbuf = bytearray(6)
         i2c.writeto_then_readfrom(MLXADDR, addrbuf, inbuf)
-        print("Device " + str(i2c_devices.index(i2c)) + ": ")
+        print(f"Device {i2c_devices.index(i2c)}: ")
         print(inbuf)
         time.sleep(0.5)

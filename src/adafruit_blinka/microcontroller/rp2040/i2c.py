@@ -19,9 +19,7 @@ class I2C:
                 pass
         else:
             raise ValueError(
-                "No Hardware I2C on (scl,sda)={}\nValid I2C ports: {}".format(
-                    (scl, sda), i2cPorts
-                )
+                f"No Hardware I2C on (scl,sda)={(scl, sda)}\nValid I2C ports: {i2cPorts}"
             )
 
     def scan(self):

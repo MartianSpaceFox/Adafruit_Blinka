@@ -30,9 +30,7 @@ class UART:
         self._timeout = timeout
 
         if flow is not None:  # default 0
-            raise NotImplementedError(
-                "Parameter '{}' unsupported on Binho Nova".format("flow")
-            )
+            raise NotImplementedError("Parameter 'flow' unsupported on Binho Nova")
 
         self._nova.setOperationMode(self._id, "UART")
         self._nova.setBaudRateUART(self._id, baudrate)

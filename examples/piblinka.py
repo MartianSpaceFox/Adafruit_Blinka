@@ -10,8 +10,7 @@ import digitalio
 print("hello blinka!")
 
 print(
-    "Found system type: %s (sys.platform %s implementation %s) "
-    % (agnostic.board_id, sys.platform, sys.implementation.name)
+    f"Found system type: {agnostic.board_id} (sys.platform {sys.platform} implementation {sys.implementation.name}) "
 )
 
 print("board contents: ", dir(board))

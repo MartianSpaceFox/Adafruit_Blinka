@@ -7,6 +7,7 @@ Not supported by all boards.
 * Author(s): Melissa LeBlanc-Williams
 """
 
+
 import sys
 
 from adafruit_blinka.agnostic import detector
@@ -30,7 +31,5 @@ elif detector.board.greatfet_one:
     from adafruit_blinka.microcontroller.nxp_lpc4330.pwmout import PWMOut
 elif detector.board.any_lubancat:
     from adafruit_blinka.microcontroller.generic_linux.sysfs_pwmout import PWMOut
-elif "sphinx" in sys.modules:
-    pass
-else:
+elif "sphinx" not in sys.modules:
     raise NotImplementedError("pulseio not supported for this board.")

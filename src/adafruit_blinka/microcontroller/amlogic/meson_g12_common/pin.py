@@ -109,14 +109,13 @@ uartPorts = ((1, UART1_TX, UART1_RX),)
 
 def get_dts_alias(device: str) -> str:
     """Get the Device Tree Alias"""
-    uevent_path = "/sys/bus/platform/devices/" + device + "/uevent"
+    uevent_path = f"/sys/bus/platform/devices/{device}/uevent"
     with open(uevent_path, "r") as fd:
         pattern = r"^OF_ALIAS_0=(.*)$"
         uevent = fd.read().split("\n")
         for line in uevent:
-            match = re.search(pattern, line)
-            if match:
-                return match.group(1).upper()
+            if match := re.search(pattern, line):
+                return match[1].upper()
 
         return None
 
@@ -126,14 +125,14 @@ i2cPorts = []
 
 alias = get_dts_alias("ffd1d000.i2c")
 if alias is not None:
-    globals()[alias + "_SCL"] = GPIOX_18
-    globals()[alias + "_SDA"] = GPIOX_17
+    globals()[f"{alias}_SCL"] = GPIOX_18
+    globals()[f"{alias}_SDA"] = GPIOX_17
     i2cPorts.append((int(alias[3]), GPIOX_18, GPIOX_17))
 
 alias = get_dts_alias("ffd1c000.i2c")
 if alias is not None:
-    globals()[alias + "_SCL"] = GPIOA_15
-    globals()[alias + "_SDA"] = GPIOA_14
+    globals()[f"{alias}_SCL"] = GPIOA_15
+    globals()[f"{alias}_SDA"] = GPIOA_14
     i2cPorts.append((int(alias[3]), GPIOA_15, GPIOA_14))
 
 i2cPorts = tuple(i2cPorts)

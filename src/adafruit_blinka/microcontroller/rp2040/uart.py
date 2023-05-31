@@ -24,9 +24,7 @@ class UART:
                 break
         else:
             raise ValueError(
-                "No Hardware UART on (tx,rx)={}\nValid UART ports: {}".format(
-                    (tx.id, rx.id), uartPorts
-                )
+                f"No Hardware UART on (tx,rx)={(tx.id, rx.id)}\nValid UART ports: {uartPorts}"
             )
 
     # pylint: enable=too-many-arguments

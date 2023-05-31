@@ -41,7 +41,7 @@ class Pin:
             mcp2221.gp_set_mode(self.id, mcp2221.GP_ALT1)
             mcp2221.dac_configure()
         else:
-            raise ValueError("Incorrect pin mode: {}".format(mode))
+            raise ValueError(f"Incorrect pin mode: {mode}")
         self._mode = mode
 
     def value(self, val=None):
@@ -72,9 +72,7 @@ class Pin:
             # scale 16 bit value to MCP2221 5 bit DAC (yes 5 bit)
             mcp2221.dac_write(self.id, val // 2048)
             return None
-        raise RuntimeError(
-            "No action for mode {} with value {}".format(self._mode, val)
-        )
+        raise RuntimeError(f"No action for mode {self._mode} with value {val}")
 
 
 # create pin instances for each pin

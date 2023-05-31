@@ -20,9 +20,7 @@ class TestBME280Interactive(TestCase):
 
         gc.collect()
 
-        if not (
-            yes_no("Is BME280 wired to SCL {} SDA {}".format(board.SCL, board.SDA))
-        ):
+        if not yes_no(f"Is BME280 wired to SCL {board.SCL} SDA {board.SDA}"):
             return  # test trivially passed
 
         i2c = I2C(board.SCL, board.SDA)
@@ -51,12 +49,8 @@ class TestMMA8451Interactive(TestCase):
 
         gc.collect()
 
-        if not (
-            yes_no(
-                "Is MMA8451 wired to SCL {} SDA {} and held still".format(
-                    board.SCL, board.SDA
-                )
-            )
+        if not yes_no(
+            f"Is MMA8451 wired to SCL {board.SCL} SDA {board.SDA} and held still"
         ):
             return  # test trivially passed
         # from https://github.com/adafruit/Adafruit_CircuitPython_MMA8451/blob/29e31a0bb836367bc73763b83513105252b7b264/examples/simpletest.py

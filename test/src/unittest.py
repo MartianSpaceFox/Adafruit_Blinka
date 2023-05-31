@@ -20,9 +20,7 @@ class AssertRaisesContext:
     def __exit__(self, exc_type, exc_value, tb):
         if exc_type is None:
             assert False, "%r not raised" % self.expected
-        if issubclass(exc_type, self.expected):
-            return True
-        return False
+        return issubclass(exc_type, self.expected)
 
 
 class TestCase:
@@ -65,14 +63,14 @@ class TestCase:
             raise TypeError("specify delta or places not both")
 
         if delta is not None:
-            if not (x == y) and abs(x - y) > delta:
+            if x != y and abs(x - y) > delta:
                 return
             if not msg:
                 msg = "%r == %r within %r delta" % (x, y, delta)
         else:
             if places is None:
                 places = 7
-            if not (x == y) and round(abs(y - x), places) != 0:
+            if x != y and round(abs(y - x), places) != 0:
                 return
             if not msg:
                 msg = "%r == %r within %r places" % (x, y, places)
@@ -142,15 +140,11 @@ def skip(msg):
 
 
 def skipIf(cond, msg):
-    if not cond:
-        return lambda x: x
-    return skip(msg)
+    return (lambda x: x) if not cond else skip(msg)
 
 
 def skipUnless(cond, msg):
-    if cond:
-        return lambda x: x
-    return skip(msg)
+    return (lambda x: x) if cond else skip(msg)
 
 
 class TestSuite:
@@ -197,7 +191,7 @@ def run_class(c, test_result):
     tear_down = getattr(o, "tearDown", lambda: None)
     for name in dir(o):
         if name.startswith("test"):
-            print("%s (%s) ..." % (name, c.__qualname__), end="")
+            print(f"{name} ({c.__qualname__}) ...", end="")
             m = getattr(o, name)
             set_up()
             try:
@@ -211,18 +205,16 @@ def run_class(c, test_result):
                 print(" FAIL")
                 if raiseException:
                     raise
-                else:
-                    print(e)
-                    test_result.failuresNum += 1
-                    continue
+                print(e)
+                test_result.failuresNum += 1
+                continue
             except BaseException as e:  # system exception
                 print(" FAIL")
                 if raiseBaseException:
                     raise
-                else:
-                    print(e)
-                    test_result.failuresNum += 1
-                    continue
+                print(e)
+                test_result.failuresNum += 1
+                continue
             finally:
                 tear_down()
 

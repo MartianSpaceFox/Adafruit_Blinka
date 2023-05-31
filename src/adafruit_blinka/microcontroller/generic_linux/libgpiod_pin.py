@@ -60,7 +60,7 @@ class Pin:
                             "Internal pulldowns not supported in libgpiod, "
                             "use physical resistor instead!"
                         )
-                    raise RuntimeError("Invalid pull for pin: %s" % self.id)
+                    raise RuntimeError(f"Invalid pull for pin: {self.id}")
 
                 self._mode = self.IN
                 self._line.release()
@@ -76,7 +76,7 @@ class Pin:
                 self._line.request(consumer=self._CONSUMER, type=gpiod.LINE_REQ_DIR_OUT)
 
             else:
-                raise RuntimeError("Invalid mode for pin: %s" % self.id)
+                raise RuntimeError(f"Invalid mode for pin: {self.id}")
 
     def value(self, val=None):
         """Set or return the Pin Value"""
